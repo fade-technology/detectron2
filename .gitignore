@@ -39,6 +39,7 @@ wheels/
 # editor settings
 .idea
 .vscode
+.DS_Store
 
 # project dirs
 /detectron2/model_zoo/configs
