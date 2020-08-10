@@ -131,17 +131,6 @@ if __name__ == "__main__":
                 cv2.imshow(WINDOW_NAME, visualized_output.get_image()[:, :, ::-1])
                 if cv2.waitKey(0) == 27:
                     break  # esc to quit
-    # elif args.webcam:
-    #     assert args.input is None, "Cannot have both --input and --webcam!"
-    #     assert args.output is None, "output not yet supported with --webcam!"
-    #     cam = cv2.VideoCapture(0)
-    #     for vis in tqdm.tqdm(demo.run_on_video(cam)):
-    #         cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
-    #         cv2.imshow(WINDOW_NAME, vis)
-    #         if cv2.waitKey(1) == 27:
-    #             break  # esc to quit
-    #     cam.release()
-    #     cv2.destroyAllWindows()
     elif args.video_input:
         video = cv2.VideoCapture(args.video_input)
         width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -167,11 +156,13 @@ if __name__ == "__main__":
                 isColor=True,
             )
         assert os.path.isfile(args.video_input)
-        segments_data = { 'header': {'version':1.0, 'file':basename}, 'frames': [] }
+        # https://www.immersivelimit.com/tutorials/create-coco-annotations-from-scratch/#coco-dataset-format
+        segments_data = { 'info': { 'description': "Fade segmentation", "version": "0.9" }}
+        segments_data['categories'] = {}
         for prediction_thing, vis_frame in tqdm.tqdm(demo.run_on_video(video), total=num_frames):
             # if args.output:
             output_file.write(vis_frame)
-            segments_data['frames'].append(prediction_thing)
+            segments_data['annotations'].append(prediction_thing)
             # else:
             #     cv2.namedWindow(basename, cv2.WINDOW_NORMAL)
             #     cv2.imshow(basename, vis_frame)
@@ -180,7 +171,7 @@ if __name__ == "__main__":
         video.release()
         if args.output:
             with open(output_fname+".json", 'w') as segments_file:
-                json.dump(segments_data['frames'], segments_file, indent=2, cls=NumpyArrayEncoder)
+                json.dump(segments_data, segments_file, indent=2, cls=NumpyArrayEncoder)
             output_file.release()
         else:
             cv2.destroyAllWindows()

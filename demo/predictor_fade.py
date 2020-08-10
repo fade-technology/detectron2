@@ -100,9 +100,10 @@ class VisualizationDemo(object):
                 predictions = predictions["instances"].to(self.cpu_device)
                 vis_frame = video_visualizer.draw_instance_predictions(frame, predictions)
                 # TODO: grab all these
-                classes = predictions.to(self.cpu_device).pred_classes.numpy()
-                scores = predictions.scores
-                retval = predictions.to(self.cpu_device).pred_boxes.tensor.numpy()
+                # classes = predictions.to(self.cpu_device).pred_classes.numpy()
+                # scores = predictions.scores
+                # retval = predictions.to(self.cpu_device).pred_boxes.tensor.numpy()
+                retval = predictions
             # elif "sem_seg" in predictions:
             #     vis_frame = video_visualizer.draw_sem_seg(
             #         frame, predictions["sem_seg"].argmax(dim=0).to(self.cpu_device)
